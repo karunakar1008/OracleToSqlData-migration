@@ -1,0 +1,1 @@
+This project is used to export data from Oracle to SQL.
