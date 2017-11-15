@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="mydbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Claim">
+          <Key>
+            <PropertyRef Name="ClaimId" />
+          </Key>
+          <Property Name="ClaimId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClaimName" Type="varchar" MaxLength="50" />
+          <Property Name="StartDate" Type="date" />
+          <Property Name="EndDate" Type="date" />
+          <Property Name="ClaimAmount" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="Claim2">
+          <Key>
+            <PropertyRef Name="ClaimId" />
+          </Key>
+          <Property Name="ClaimId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClaimName" Type="varchar" MaxLength="50" />
+          <Property Name="StartDate" Type="date" />
+          <Property Name="EndDate" Type="date" />
+          <Property Name="ClaimAmount" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="Claim3">
+          <Key>
+            <PropertyRef Name="ClaimId3" />
+          </Key>
+          <Property Name="ClaimId3" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClaimName3" Type="varchar" MaxLength="50" />
+          <Property Name="StartDate3" Type="date" />
+          <Property Name="EndDate3" Type="date" />
+          <Property Name="ClaimAmount3" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="VolvoProgram">
+          <Key>
+            <PropertyRef Name="VolvoProgramId" />
+          </Key>
+          <Property Name="VolvoProgramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Programname" Type="varchar" MaxLength="50" />
+          <Property Name="EnableDate" Type="date" />
+        </EntityType>
+        <EntityContainer Name="mydbModelStoreContainer">
+          <EntitySet Name="Claim" EntityType="Self.Claim" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Claim2" EntityType="Self.Claim2" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Claim3" EntityType="Self.Claim3" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VolvoProgram" EntityType="Self.VolvoProgram" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="mydbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Claim">
+          <Key>
+            <PropertyRef Name="ClaimId" />
+          </Key>
+          <Property Name="ClaimId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClaimName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StartDate" Type="DateTime" Precision="0" />
+          <Property Name="EndDate" Type="DateTime" Precision="0" />
+          <Property Name="ClaimAmount" Type="Decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="VolvoProgram">
+          <Key>
+            <PropertyRef Name="VolvoProgramId" />
+          </Key>
+          <Property Name="VolvoProgramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Programname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EnableDate" Type="DateTime" Precision="0" />
+        </EntityType>
+        <EntityContainer Name="mydbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Claims" EntityType="Self.Claim" />
+          <EntitySet Name="VolvoPrograms" EntityType="Self.VolvoProgram" />
+          <EntitySet Name="Claim2" EntityType="mydbModel.Claim2" />
+          <EntitySet Name="Claim3" EntityType="mydbModel.Claim3" />
+        </EntityContainer>
+        <EntityType Name="Claim2">
+          <Key>
+            <PropertyRef Name="ClaimId" />
+          </Key>
+          <Property Name="ClaimId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClaimName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StartDate" Type="DateTime" Precision="0" />
+          <Property Name="EndDate" Type="DateTime" Precision="0" />
+          <Property Name="ClaimAmount" Type="Decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="Claim3">
+          <Key>
+            <PropertyRef Name="ClaimId3" />
+          </Key>
+          <Property Name="ClaimId3" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClaimName3" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StartDate3" Type="DateTime" Precision="0" />
+          <Property Name="EndDate3" Type="DateTime" Precision="0" />
+          <Property Name="ClaimAmount3" Type="Decimal" Precision="18" Scale="0" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="mydbModelStoreContainer" CdmEntityContainer="mydbEntities">
+          <EntitySetMapping Name="Claims">
+            <EntityTypeMapping TypeName="mydbModel.Claim">
+              <MappingFragment StoreEntitySet="Claim">
+                <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
+                <ScalarProperty Name="ClaimName" ColumnName="ClaimName" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="ClaimAmount" ColumnName="ClaimAmount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VolvoPrograms">
+            <EntityTypeMapping TypeName="mydbModel.VolvoProgram">
+              <MappingFragment StoreEntitySet="VolvoProgram">
+                <ScalarProperty Name="VolvoProgramId" ColumnName="VolvoProgramId" />
+                <ScalarProperty Name="Programname" ColumnName="Programname" />
+                <ScalarProperty Name="EnableDate" ColumnName="EnableDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Claim2">
+            <EntityTypeMapping TypeName="mydbModel.Claim2">
+              <MappingFragment StoreEntitySet="Claim2">
+                <ScalarProperty Name="ClaimAmount" ColumnName="ClaimAmount" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="ClaimName" ColumnName="ClaimName" />
+                <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Claim3">
+            <EntityTypeMapping TypeName="mydbModel.Claim3">
+              <MappingFragment StoreEntitySet="Claim3">
+                <ScalarProperty Name="ClaimAmount3" ColumnName="ClaimAmount3" />
+                <ScalarProperty Name="EndDate3" ColumnName="EndDate3" />
+                <ScalarProperty Name="StartDate3" ColumnName="StartDate3" />
+                <ScalarProperty Name="ClaimName3" ColumnName="ClaimName3" />
+                <ScalarProperty Name="ClaimId3" ColumnName="ClaimId3" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
