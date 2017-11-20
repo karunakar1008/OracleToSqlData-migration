@@ -35,6 +35,13 @@
           <Property Name="EndDate3" Type="date" />
           <Property Name="ClaimAmount3" Type="decimal" Precision="18" Scale="0" />
         </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="EmployeeId" />
+          </Key>
+          <Property Name="EmployeeId" Type="int" Nullable="false" />
+          <Property Name="EmployeeName" Type="nchar" MaxLength="10" />
+        </EntityType>
         <EntityType Name="VolvoProgram">
           <Key>
             <PropertyRef Name="VolvoProgramId" />
@@ -47,6 +54,7 @@
           <EntitySet Name="Claim" EntityType="Self.Claim" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Claim2" EntityType="Self.Claim2" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Claim3" EntityType="Self.Claim3" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Employee" EntityType="Self.Employee" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VolvoProgram" EntityType="Self.VolvoProgram" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -76,6 +84,7 @@
           <EntitySet Name="VolvoPrograms" EntityType="Self.VolvoProgram" />
           <EntitySet Name="Claim2" EntityType="mydbModel.Claim2" />
           <EntitySet Name="Claim3" EntityType="mydbModel.Claim3" />
+          <EntitySet Name="Employees" EntityType="mydbModel.Employee" />
         </EntityContainer>
         <EntityType Name="Claim2">
           <Key>
@@ -96,6 +105,13 @@
           <Property Name="StartDate3" Type="DateTime" Precision="0" />
           <Property Name="EndDate3" Type="DateTime" Precision="0" />
           <Property Name="ClaimAmount3" Type="Decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="EmployeeId" />
+          </Key>
+          <Property Name="EmployeeId" Type="Int32" Nullable="false" />
+          <Property Name="EmployeeName" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -142,6 +158,14 @@
                 <ScalarProperty Name="StartDate3" ColumnName="StartDate3" />
                 <ScalarProperty Name="ClaimName3" ColumnName="ClaimName3" />
                 <ScalarProperty Name="ClaimId3" ColumnName="ClaimId3" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="mydbModel.Employee">
+              <MappingFragment StoreEntitySet="Employee">
+                <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -1,0 +1,48 @@
+select * from Claim3
+
+DECLARE @pageNumber INT = 2  , 
+        @RowsPerPage INT = 3
+
+SELECT  *
+FROM    Claim3
+ORDER BY ClaimId3
+        OFFSET ( ( @pageNumber - 1 ) * @RowsPerPage ) ROWS
+             FETCH NEXT @RowsPerPage ROWS ONLY;
+
+
+DECLARE pageNumber INT := 2  , 
+        RowsPerPage INT = 3
+SELECT *
+FROM Claim3
+ORDER BY ClaimId3
+OFFSET 5 ROWS FETCH NEXT 10 ROWS ONLY
+
+
+
+SELECT owner, table_name FROM all_tables;
+SELECT * FROM all_tables
+ where OWNER='VC'
+ 
+ SELECT TABLE_NAME, OWNER FROM all_tables
+  where OWNER='VC';
+ORDER BY
+  owner, table_name
+  
+  select * from VC.CLAIM
+
+
+select * from EmployeeTest
+
+ SELECT TABLE_NAME, OWNER FROM all_tables where TABLE_NAME='EMPLOYEETEST'
+  where OWNER='VC';
+  
+  
+  SELECT TABLE_NAME, OWNER FROM all_tables ORDER BY TABLE_NAME
+  
+  select TABLE_NAME,DATA_TYPE from all_tab_columns
+where  table_name = 'EMPLOYEETEST';
+
+select COLUMN_NAME,DATA_TYPE from all_tab_columns
+where  table_name = 'EMPLOYEETEST';
+
+select EMPLOYEETEST.ID as ClaimId FROM EMPLOYEETEST

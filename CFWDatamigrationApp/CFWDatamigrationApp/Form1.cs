@@ -13,9 +13,7 @@ namespace CFWDatamigrationApp
 {
     public partial class Form1 : Form
     {
-        string connetionString = null;
-        SqlConnection cnn;
-
+      
         DataTable dtSourceColumns = new DataTable();
         DataTable dtDestColumns = new DataTable();
         DataSet sourceData = new DataSet();
@@ -23,95 +21,18 @@ namespace CFWDatamigrationApp
         TableColumn[] sourceSolumns;
         TableColumn[] destSolumns;
         string destinationTable;
-
+        SqlOperations sqlOperations;
+        OracleOperations oracleOperations;
         public Form1()
         {
-            connetionString = "Data Source=E3480-KBHOGYARI\\SQL2014;Initial Catalog=mydb;User ID=sa;Password=admin@123";
+            oracleOperations = new OracleOperations();
+            sqlOperations = new SqlOperations();
             InitializeComponent();
-        }
-
-        public void InsertStudent(string tableName, params object[] columnValues)
-        {
-            using (SqlConnection con = new SqlConnection(connetionString))
-            {
-
-                DataTable dt = new DataTable();
-
-                if (dtDestColumns.Rows.Count == 0)
-                {
-                    MessageBox.Show("Atleast one column should be there in select statement!");
-                    return;
-                }
-                StringBuilder query = new StringBuilder("Insert into ");
-                StringBuilder query2 = new StringBuilder("");
-
-                string tableNmae = "";
-                foreach (DataRow row in dtSourceColumns.Rows)
-                {
-                    tableNmae = row.ItemArray[2].ToString();
-                    destinationTable = row.ItemArray[2].ToString();
-                    //  dt.Columns.Add(new DataColumn(row.ItemArray[1].ToString(), sourceSolumns.FirstOrDefault(c => c.ColumnName == row.ItemArray[1].ToString()).GetType()));
-                    query2.Append(row.ItemArray[0] + "." + row.ItemArray[1] + ",");
-                }
-                query2.Remove(query.Length - 1, 1);
-                query.Append(tableNmae);
-                query.Append(query2.ToString());
-
-                cnn = new SqlConnection(connetionString);
-                DataSet myDs = new DataSet();
-                try
-                {
-                    cnn.Open();
-                    SqlCommand myCmd = new SqlCommand(query.ToString(), cnn);
-                    SqlDataAdapter adapter = new SqlDataAdapter();
-                    adapter.SelectCommand = myCmd;
-                    adapter.Fill(myDs);
-                    cnn.Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Can not open connection ! ");
-                }
-
-
-                con.Open();
-                string insertQuery = string.Empty;
-
-                //string query = "Insert into tblStudent (student_name, student_age,student_gender) values(@studname, @studage , @gender)";
-                //SqlCommand cmd = new SqlCommand(query, con);
-                //cmd.Parameters.AddWithValue("@studname", strStudentName);
-                //cmd.Parameters.AddWithValue("@studage", intAge);
-                //cmd.Parameters.AddWithValue("@gender", strGender);
-                //return cmd.ExecuteNonQuery();
-
-                using (SqlBulkCopy sqlbc = new SqlBulkCopy(con))
-                {
-                    DataTable newProducts = sourceData.Tables[0];
-                    sqlbc.DestinationTableName = destinationTable;
-
-                    try
-                    {
-                        sqlbc.WriteToServer(newProducts);
-                        MessageBox.Show("Bulk data stored successfully");
-                    }
-                    catch (Exception)
-                    {
-                        MessageBox.Show("Bulk data storimg failed!");
-                    }
-                   
-                }
-
-            }
         }
 
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //Dictionary<string, Type> types = new Dictionary<string, Type>();
-            //types.Add("int", typeof(System.Int32));
-            //types.Add("decimal", typeof(System.Decimal));
-            //types.Add("bool", typeof(System.Boolean));
-            //combodataTypes.Items.AddRange(types.Keys.ToArray());
 
             dtSourceColumns.Columns.AddRange(
                                                 new DataColumn[4] {
@@ -123,49 +44,26 @@ namespace CFWDatamigrationApp
             dtDestColumns.Columns.AddRange(
                                             new DataColumn[2] { new DataColumn("Table Name",typeof(string)),
                                             new DataColumn("Column Name", typeof(string))});
+
             dataGridSourceColumns.DataSource = dtSourceColumns;
             dataGridDestinationColumns.DataSource = dtDestColumns;
 
-            using (var dbContext = new mydbEntities())
+            foreach (string table in oracleOperations.GetAllTables())
             {
-                var metadata = ((IObjectContextAdapter)dbContext).ObjectContext.MetadataWorkspace;
-
-                var tables = metadata.GetItemCollection(DataSpace.SSpace)
-                    .GetItems<EntityContainer>()
-                    .Single()
-                    .BaseEntitySets
-                    .OfType<EntitySet>()
-                    .Where(s => !s.MetadataProperties.Contains("Type")
-                    || s.MetadataProperties["Type"].ToString() == "Tables");
-
-                foreach (var table in tables)
-                {
-                    var tableName = table.MetadataProperties.Contains("Table")
-                        && table.MetadataProperties["Table"].Value != null
-                        ? table.MetadataProperties["Table"].Value.ToString()
-                        : table.Name;
-
-                    comboDestTables.Items.Add(tableName);
-                    comboSourcetable.Items.Add(tableName);
-                    var tableSchema = table.MetadataProperties["Schema"].Value.ToString();
-
-                    Console.WriteLine(tableSchema + "." + tableName);
-                }
+                comboSourcetable.Items.Add(table);
+            }
+            foreach (var table in sqlOperations.GetAllTables())
+            {
+                comboDestTables.Items.Add(table);
             }
         }
-
 
         private void comboSourcetable_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
             DataTable dt = new DataTable();
             string selectedTable = (string)comboBox.SelectedItem;
-            var currentEntity = string.Format("{0}.{1},{2}", "CFWDatamigrationApp", selectedTable, "CFWDatamigrationApp");
-            Type type = Type.GetType(currentEntity);
-
-            var names = type.GetProperties()
-                        .Select(property => new TableColumn() { ColumnName = property.Name, columnType = property.PropertyType })
-                        .ToArray();
+            var names = oracleOperations.GetAllColumnsByTable(selectedTable);
             sourceSolumns = names;
             comboSourceColumns.Items.Clear();
 
@@ -178,57 +76,28 @@ namespace CFWDatamigrationApp
             {
                 dt.Columns.Add(new DataColumn(item.ColumnName, item.GetType()));
             }
-            using (var dbContext = new mydbEntities())
-            {
-                switch (selectedTable.ToLower())
-                {
-                    case "claim":
-
-                        foreach (var item in dbContext.Claims.ToList())
-                        {
-                            dt.Rows.Add();
-                        }
-                        break;
-                    case "claimdetail":
-                        foreach (var item in dbContext.VolvoPrograms.ToList())
-                        {
-                            dt.Rows.Add(item.VolvoProgramId, item.Programname, item.EnableDate);
-                        }
-                        break;
-                }
-
-                dataGridView1.DataSource = dt;
-            }
 
             comboDestcolumns.Items.Clear();
             comboDestcolumns.Items.AddRange(names);
-
             dtSourceColumns.Rows.Clear();
         }
 
         private void comboDestTables_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-
             string selectedTable = (string)comboBox.SelectedItem;
-            var currentEntity = string.Format("{0}.{1},{2}", "CFWDatamigrationApp", selectedTable, "CFWDatamigrationApp");
-            Type type = Type.GetType(currentEntity);
-            var names = type.GetProperties()
-                        .Select(property => new TableColumn() { ColumnName = property.Name, columnType = property.PropertyType })
-                        .ToArray();
-            destSolumns = names;
+            destSolumns = sqlOperations.GetAllColumnsByTable(selectedTable); ;
             comboDestcolumns.Items.Clear();
-            foreach (var item in names)
+            foreach (var item in destSolumns)
             {
                 comboDestcolumns.Items.Add(item.ColumnName);
             }
             DataTable dt = new DataTable();
-            foreach (var item in names)
+            foreach (var item in destSolumns)
             {
                 dt.Columns.Add(new DataColumn(item.ColumnName, item.GetType()));
             }
         }
-
 
         private void btmAddSourceColumn_Click(object sender, EventArgs e)
         {
@@ -284,15 +153,6 @@ namespace CFWDatamigrationApp
             comboDestcolumns.SelectedIndex = -1;
         }
 
-        private DataTable MakeTable()
-        {
-            DataTable newProducts = sourceData.Tables[0];
-
-
-            // Return the new DataTable. 
-            return newProducts;
-        }
-
         private void btnGetData_Click(object sender, EventArgs e)
         {
             DataTable dt = new DataTable();
@@ -307,24 +167,16 @@ namespace CFWDatamigrationApp
             foreach (DataRow row in dtSourceColumns.Rows)
             {
                 tableNmae = row.ItemArray[0].ToString();
-                dt.Columns.Add(new DataColumn(row.ItemArray[3].ToString(), sourceSolumns.FirstOrDefault(c => c.ColumnName == row.ItemArray[1].ToString()).GetType()));
+                dt.Columns.Add(new DataColumn(row.ItemArray[3].ToString(), sourceSolumns.FirstOrDefault(c => c.ColumnName == row.ItemArray[1].ToString()).columnType.FullName.GetType()));
                 query.Append(row.ItemArray[0] + "." + row.ItemArray[1] + " as " + row.ItemArray[3].ToString() + ",");
             }
 
             query.Remove(query.Length - 1, 1);
             query.Append(" FROM " + tableNmae);
 
-            cnn = new SqlConnection(connetionString);
-
             try
             {
-                cnn.Open();
-                SqlCommand myCmd = new SqlCommand(query.ToString(), cnn);
-                SqlDataAdapter adapter = new SqlDataAdapter();
-                adapter.SelectCommand = myCmd;
-                sourceData.Clear();
-                adapter.Fill(sourceData);
-                cnn.Close();
+                sourceData = oracleOperations.GetSourceData(query.ToString());
             }
             catch (Exception ex)
             {
@@ -332,89 +184,17 @@ namespace CFWDatamigrationApp
             }
 
             dataGridView1.DataSource = sourceData.Tables[0];
-
-
-            //string con = "Provider=OraOLEDB.Oracle;dbq=vc;Database=testconnection;User Id=system;Password=123;";
-            //try
-            //{
-            //    using (var connection = new OleDbConnection(con))
-            //    {
-            //        connection.Open();
-            //        OleDbCommand cmd = new OleDbCommand();
-            //        cmd.Connection = connection;
-
-            //        cmd.CommandType = CommandType.Text;
-            //        cmd.CommandText = "select * from EMPloyeetest ";
-            //        OleDbDataReader dr = cmd.ExecuteReader();
-
-            //        if (dr.HasRows)
-            //        {
-
-            //            while (dr.Read())
-            //            {
-            //                Console.WriteLine("\n" + dr["table_name"].ToString());
-            //            }
-            //            Console.Write("</table>");
-            //        }
-            //        else
-            //        {
-            //            Console.Write("No Data In DataBase");
-            //        }
-            //        connection.Close();
-
-            //        //return "connected";
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    //  return ex.Message.ToString();
-
-            //}
-            //finally
-            //{
-            //    // Console.ReadKey();
-            //}
-
         }
 
         private void btnInsertData_Click(object sender, EventArgs e)
         {
-            cnn = new SqlConnection(connetionString);
             try
             {
-                cnn.Open();
-               // MessageBox.Show("Connection Open ! ");
                 foreach (DataRow row in dtSourceColumns.Rows)
                 {
                     destinationTable = row.ItemArray[2].ToString();
                 }
-
-                using (SqlConnection con = new SqlConnection(connetionString))
-                {
-                    con.Open();
-
-                    using (SqlBulkCopy sqlbc = new SqlBulkCopy(con))
-                    {
-                        DataTable newProducts = sourceData.Tables[0];
-                        sqlbc.DestinationTableName = destinationTable;
-                        foreach (DataColumn item in sourceData.Tables[0].Columns)
-                        {
-                            sqlbc.ColumnMappings.Add(item.ColumnName, item.ColumnName);
-                        }
-
-                        try
-                        {
-                            sqlbc.WriteToServer(newProducts);
-                            MessageBox.Show("Bulk data stored successfully");
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Bulk data storimg failed!");
-                        }
-
-                    }
-                    cnn.Close();
-                }
+                sqlOperations.InsertDataToDestination(sourceData, destinationTable);
             }
             catch (Exception ex)
             {
@@ -428,5 +208,263 @@ namespace CFWDatamigrationApp
         public string ColumnName { get; set; }
 
         public Type columnType { get; set; }
+    }
+
+    public class OracleOperations
+    {
+        string sourceConnetionString = null;
+        DataSet sourceData = new DataSet();
+
+        public OracleOperations()
+        {
+            this.sourceConnetionString = "Provider=OraOLEDB.Oracle;dbq=vc;Database=testconnection;User Id=system;Password=123;";
+        }
+
+        Dictionary<string, string> dictDTmaapings = new Dictionary<string, string>()
+        {
+                {"CHAR","System.String"},
+                {"NCHAR","System.String"},
+                {"VARCHAR2","System.String"},
+                {"NVARCHAR2","System.String"},
+                {"DATE","System.DateTime"},
+                {"NUMBER","System.Decimal"},
+                {"FLOAT","System.Decimal"},
+                {"INTEGER","System.Decimal"},
+                {"UNSIGNED INTEGER","System.Decimal"},
+                {"LONG","System.String"},
+        };
+
+        public string[] GetAllTables()
+        {
+            List<string> tables = new List<string>();
+            try
+            {
+                using (var connection = new OleDbConnection(sourceConnetionString))
+                {
+                    connection.Open();
+                    OleDbCommand cmd = new OleDbCommand();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "SELECT TABLE_NAME, OWNER FROM all_tables ORDER BY TABLE_NAME";
+                    //cmd.CommandText = "SELECT TABLE_NAME, OWNER FROM all_tables where TABLE_NAME='EMPLOYEETEST' ORDER BY TABLE_NAME";
+
+                    OleDbDataReader dr = cmd.ExecuteReader();
+
+                    if (dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                            tables.Add(dr[0].ToString());
+                            //GetAllColumnsByTable(dr[0].ToString());
+                        }
+                    }
+                    else
+                    {
+                        Console.Write("No Data In DataBase");
+                    }
+                    connection.Close();
+                    return tables.ToArray<string>();
+                }
+            }
+            catch (Exception ex)
+            {
+                //  return ex.Message.ToString();
+                return tables.ToArray<string>();
+            }
+
+        }
+
+        public TableColumn[] GetAllColumnsByTable(string tableName)
+        {
+            List<TableColumn> tableColumns = new List<TableColumn>();
+            try
+            {
+                using (var connection = new OleDbConnection(sourceConnetionString))
+                {
+                    connection.Open();
+                    OleDbCommand cmd = new OleDbCommand();
+                    cmd.Connection = connection;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "select COLUMN_NAME,DATA_TYPE from all_tab_columns where table_name = \'" + tableName + "\'";
+                    OleDbDataReader dr = cmd.ExecuteReader();
+
+                    if (dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                            tableColumns.Add(new TableColumn { ColumnName = dr[0].ToString(), columnType = Type.GetType(new OracleOperations().OracleCsharpTypeMapping(dr[1].ToString())) });
+                        }
+                    }
+                    else
+                    {
+                        Console.Write("No Data In DataBase");
+                    }
+                    connection.Close();
+                    return tableColumns.ToArray<TableColumn>();
+                }
+            }
+            catch (Exception ex)
+            {
+                //  return ex.Message.ToString();
+                return tableColumns.ToArray<TableColumn>();
+            }
+        }
+
+        public string OracleCsharpTypeMapping(string oracleDataType)
+        {
+            return dictDTmaapings[oracleDataType];
+        }
+
+        public DataSet GetSourceData(string query)
+        {
+            using (var connection = new OleDbConnection(sourceConnetionString))
+            {
+                connection.Open();
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = connection;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = query;
+                OleDbDataAdapter adapter = new OleDbDataAdapter();
+                adapter.SelectCommand = cmd;
+                sourceData.Clear();
+                adapter.Fill(sourceData);
+                connection.Close();
+                return sourceData;
+            }
+
+
+        }
+    }
+
+    public class SqlOperations
+    {
+        string destConnetionString = null;
+        DataSet sourceData = new DataSet();
+        Dictionary<string, string> dicSqlToCsharpTypes = new Dictionary<string, string>()
+        {
+
+                {"char","System.String"},
+                {"varchar","System.String"},
+                {"nchar","System.String"},
+                 {"nvarchar","System.String"},
+                {"date","System.DateTime"},
+                {"int","System.Int32"},
+                {"decimal","System.Decimal"}
+        };
+
+        public SqlOperations()
+        {
+            this.destConnetionString = "Data Source=E3480-KBHOGYARI\\SQL2014;Initial Catalog=mydb;User ID = sa; Password = admin@123;";
+        }
+
+        public string[] GetAllTables()
+        {
+            List<string> tables = new List<string>();
+            try
+            {
+                var connection = new SqlConnection(destConnetionString);
+                connection.Open();
+                SqlCommand cmd = new SqlCommand("SELECT * FROM sys.Tables order by name", connection);
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        tables.Add(dr[0].ToString());
+                    }
+                }
+                else
+                {
+                    Console.Write("No Data In DataBase");
+                }
+                connection.Close();
+                return tables.ToArray<string>();
+            }
+            catch (Exception ex)
+            {
+                return tables.ToArray<string>();
+            }
+
+        }
+
+        public TableColumn[] GetAllColumnsByTable(string tableName)
+        {
+            List<TableColumn> tableColumns = new List<TableColumn>();
+            try
+            {
+                //using (var connection = new sql(destConnetionString))
+                //{
+                var connection = new SqlConnection(destConnetionString);
+                connection.Open();
+                string q = "select COLUMN_NAME,DATA_TYPE from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = \'" + tableName + "\'";
+                SqlCommand cmd = new SqlCommand(q, connection);
+                SqlDataReader dr = cmd.ExecuteReader();
+
+
+                //connection.Open();
+                //OleDbCommand cmd = new OleDbCommand();
+                //cmd.Connection = connection;
+                //cmd.CommandType = CommandType.Text;
+                //cmd.CommandText = "select COLUMN_NAME,DATA_TYPE from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = \'" + tableName + "\'";
+                //OleDbDataReader dr = cmd.ExecuteReader();
+
+                if (dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        tableColumns.Add(new TableColumn { ColumnName = dr[0].ToString(), columnType = Type.GetType(this.OracleCsharpTypeMapping(dr[1].ToString())) });
+                    }
+                }
+                else
+                {
+                    Console.Write("No Data In DataBase");
+                }
+                connection.Close();
+                return tableColumns.ToArray<TableColumn>();
+                //}
+            }
+            catch (Exception ex)
+            {
+                return tableColumns.ToArray<TableColumn>();
+            }
+        }
+
+        public string OracleCsharpTypeMapping(string oracleDataType)
+        {
+            return dicSqlToCsharpTypes[oracleDataType];
+        }
+
+        public bool InsertDataToDestination(DataSet ds,string destinationTable)
+        {
+            using (SqlConnection con = new SqlConnection(destConnetionString))
+            {
+                con.Open();
+
+                using (SqlBulkCopy sqlbc = new SqlBulkCopy(con))
+                {
+                    DataTable newProducts = ds.Tables[0];
+                    sqlbc.DestinationTableName = destinationTable;
+                    for (int i = 0; i < newProducts.Columns.Count; i++)
+                    {
+                        sqlbc.ColumnMappings.Add(i, i);
+                    }
+
+                    try
+                    {
+                        sqlbc.WriteToServer(newProducts);
+                        MessageBox.Show("Bulk data stored successfully");
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Bulk data storimg failed!");
+                        return false;
+                    }
+
+                }
+              
+            }
+        }
     }
 }

@@ -29,5 +29,6 @@ namespace CFWDatamigrationApp
         public virtual DbSet<VolvoProgram> VolvoPrograms { get; set; }
         public virtual DbSet<Claim2> Claim2 { get; set; }
         public virtual DbSet<Claim3> Claim3 { get; set; }
+        public virtual DbSet<Employee> Employees { get; set; }
     }
 }

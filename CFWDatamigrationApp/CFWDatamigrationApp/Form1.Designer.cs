@@ -40,7 +40,6 @@
             this.btnGetData = new System.Windows.Forms.Button();
             this.dataGridSourceColumns = new System.Windows.Forms.DataGridView();
             this.dataGridDestinationColumns = new System.Windows.Forms.DataGridView();
-            this.btnAddDestColumn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSourceColumns)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDestinationColumns)).BeginInit();
@@ -59,7 +58,7 @@
             // comboDestTables
             // 
             this.comboDestTables.FormattingEnabled = true;
-            this.comboDestTables.Location = new System.Drawing.Point(516, 98);
+            this.comboDestTables.Location = new System.Drawing.Point(655, 98);
             this.comboDestTables.Name = "comboDestTables";
             this.comboDestTables.Size = new System.Drawing.Size(121, 28);
             this.comboDestTables.TabIndex = 1;
@@ -68,7 +67,7 @@
             // comboDestcolumns
             // 
             this.comboDestcolumns.FormattingEnabled = true;
-            this.comboDestcolumns.Location = new System.Drawing.Point(668, 98);
+            this.comboDestcolumns.Location = new System.Drawing.Point(807, 98);
             this.comboDestcolumns.Name = "comboDestcolumns";
             this.comboDestcolumns.Size = new System.Drawing.Size(121, 28);
             this.comboDestcolumns.TabIndex = 2;
@@ -76,9 +75,9 @@
             // comboSourcetable
             // 
             this.comboSourcetable.FormattingEnabled = true;
-            this.comboSourcetable.Location = new System.Drawing.Point(41, 98);
+            this.comboSourcetable.Location = new System.Drawing.Point(41, 101);
             this.comboSourcetable.Name = "comboSourcetable";
-            this.comboSourcetable.Size = new System.Drawing.Size(121, 28);
+            this.comboSourcetable.Size = new System.Drawing.Size(208, 28);
             this.comboSourcetable.TabIndex = 4;
             this.comboSourcetable.SelectedIndexChanged += new System.EventHandler(this.comboSourcetable_SelectedIndexChanged);
             // 
@@ -103,7 +102,7 @@
             // lblDest
             // 
             this.lblDest.AutoSize = true;
-            this.lblDest.Location = new System.Drawing.Point(512, 52);
+            this.lblDest.Location = new System.Drawing.Point(651, 52);
             this.lblDest.Name = "lblDest";
             this.lblDest.Size = new System.Drawing.Size(142, 20);
             this.lblDest.TabIndex = 8;
@@ -111,7 +110,7 @@
             // 
             // btmAddSourceColumn
             // 
-            this.btmAddSourceColumn.Location = new System.Drawing.Point(317, 98);
+            this.btmAddSourceColumn.Location = new System.Drawing.Point(442, 94);
             this.btmAddSourceColumn.Name = "btmAddSourceColumn";
             this.btmAddSourceColumn.Size = new System.Drawing.Size(158, 35);
             this.btmAddSourceColumn.TabIndex = 6;
@@ -122,9 +121,9 @@
             // comboSourceColumns
             // 
             this.comboSourceColumns.FormattingEnabled = true;
-            this.comboSourceColumns.Location = new System.Drawing.Point(169, 98);
+            this.comboSourceColumns.Location = new System.Drawing.Point(255, 101);
             this.comboSourceColumns.Name = "comboSourceColumns";
-            this.comboSourceColumns.Size = new System.Drawing.Size(121, 28);
+            this.comboSourceColumns.Size = new System.Drawing.Size(164, 28);
             this.comboSourceColumns.TabIndex = 9;
             // 
             // btnGetData
@@ -155,23 +154,12 @@
             this.dataGridDestinationColumns.Size = new System.Drawing.Size(372, 261);
             this.dataGridDestinationColumns.TabIndex = 12;
             // 
-            // btnAddDestColumn
-            // 
-            this.btnAddDestColumn.Location = new System.Drawing.Point(964, 94);
-            this.btnAddDestColumn.Name = "btnAddDestColumn";
-            this.btnAddDestColumn.Size = new System.Drawing.Size(158, 35);
-            this.btnAddDestColumn.TabIndex = 13;
-            this.btnAddDestColumn.Text = "Add column";
-            this.btnAddDestColumn.UseVisualStyleBackColor = true;
-            this.btnAddDestColumn.Click += new System.EventHandler(this.btnAddDestColumn_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1241, 820);
-            this.Controls.Add(this.btnAddDestColumn);
             this.Controls.Add(this.dataGridDestinationColumns);
             this.Controls.Add(this.dataGridSourceColumns);
             this.Controls.Add(this.btnGetData);
@@ -209,6 +197,5 @@
         private System.Windows.Forms.Button btnGetData;
         private System.Windows.Forms.DataGridView dataGridSourceColumns;
         private System.Windows.Forms.DataGridView dataGridDestinationColumns;
-        private System.Windows.Forms.Button btnAddDestColumn;
     }
 }

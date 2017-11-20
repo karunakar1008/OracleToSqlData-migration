@@ -78,6 +78,9 @@
     <Compile Include="Claim3.cs">
       <DependentUpon>CFMModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Employee.cs">
+      <DependentUpon>CFMModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
